@@ -69,8 +69,9 @@ end
 
 # date source: https://www.rki.de/DE/Content/InfAZ/N/Neuartiges_Coronavirus/Daten/Impfquoten-Tab.html
 def parse(second, third)
-  CSV.parse(File.read("data/per_day.csv"), col_sep: ';').each do |row|
+  CSV.parse(File.read("data/per_day.csv")).each do |row|
     next if row[0] == "Datum" # skip headers
+    return if row[0] == "Gesamt" # skip footer
 
     date = Date.strptime(row[0], "%d.%m.%Y")
 
