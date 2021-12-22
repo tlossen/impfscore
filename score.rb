@@ -1,5 +1,8 @@
 require "csv"
 
+# source: https://www.destatis.de/DE/Themen/Gesellschaft-Umwelt/Bevoelkerung/Bevoelkerungsstand/_inhalt.html
+POPULATION = 83_100_000
+
 # source: https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3949410
 # supplemental table 4, "2 doses of any vaccine"
 def score(from, to) 
@@ -54,12 +57,12 @@ def apply_booster(second, third, date, count)
   while (count > 0)
     oldest = second.first
     if count >= oldest.count
-      # replace oldest
+      # replace oldest group
       second.delete_at(0)
       third << Group3.new(date, oldest.count, oldest.date)
       count -= oldest.count
     else
-      # split
+      # split oldest group
       third << Group3.new(date, count, oldest.date)
       second[0] = Group2.new(oldest.date, oldest.count - count)
       count = 0
@@ -81,7 +84,7 @@ def parse(second, third)
     count3 = row[3].gsub(".", "").to_i
     apply_booster(second, third, date, count3)
 
-    score = score_sum(second, third, date) / 81_100_000.0
+    score = score_sum(second, third, date) / POPULATION
     puts "#{date}, #{count2}, #{count3}, #{score.round(1)}"
   end
 end
